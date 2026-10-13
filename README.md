@@ -29,18 +29,45 @@ and Nonrenewable Resource.
 
 # Install and Hello World3
 
-Install pyworld3 by cloning the repository, installing the requirements ``numpy``, ``scipy``
-and ``matplotlib`` and do:
+The project uses Python 3.14 or newer, with Python 3.14 selected in
+`.python-version`. Install [uv](https://docs.astral.sh/uv/getting-started/installation/),
+clone this repository, and run these commands from the project directory:
 
+```sh
+uv sync --locked
+uv run pyworld3
 ```
-python setup.py install
+
+The first command installs the package and development dependencies into `.venv`
+using the committed `uv.lock`. The second runs the reference simulation and
+opens its plot. To save a plot without a graphical desktop:
+
+```sh
+uv run pyworld3 --output results/reference.png
 ```
 
-Please note that the "hello_world" function was not implemented in the update. I am planing to do so in the future.
+You can also use `uv run python -m pyworld3`. Use `uv run pyworld3 --help`
+for time-range and time-step options. The interval must be divisible by `dt`.
+Project metadata and dependencies are maintained in `pyproject.toml`.
 
-Run the provided example to simulate the standard run, known as the *Business
-as usual* scenario:
-``` Python
+Run the automated checks with:
+
+```sh
+uv run pytest
+```
+
+The default suite in `tests/` checks the integrated World3-03 simulation,
+agreement between the checked and fast paths, time-grid validation, and the
+SciPy smoothing integration. Historical scripts in the repository root and
+`pyworld3/test_sectors.py` are not part of that suite: some sector reference
+values differ from the updated model, the old World3 assertions reference a
+removed `ppol` attribute, and the standalone agriculture test did not terminate
+during review. The new checks do not establish scientific agreement with the
+original STELLA simulation; that requires separate reference-data validation.
+
+For use from Python:
+
+```python
 import pyworld3
 pyworld3.hello_world3()
 ```

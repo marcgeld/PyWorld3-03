@@ -33,6 +33,7 @@
 # knowledge of the CeCILL license and that you accept its terms.
 
 from functools import wraps
+from itertools import cycle
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter
@@ -88,7 +89,7 @@ def requires(outputs=None, inputs=None,
 def plot_world_variables(time, var_data, var_names, var_lims,
                          img_background=None,
                          title=None,
-                         figsize=None,
+                         figsize=(14, 9),
                          dist_spines=0.09,
                          grid=False):
     """
@@ -119,7 +120,7 @@ def plot_world_variables(time, var_data, var_names, var_lims,
                               var_lims[0][0], var_lims[0][1]], cmap="gray")
 
     ps = []
-    for ax, label, ydata, color in zip(axs, var_names, var_data, colors):
+    for ax, label, ydata, color in zip(axs, var_names, var_data, cycle(colors)):
         ps.append(ax.plot(time, ydata, label=label, color=color)[0])
     axs[0].grid(grid)
     axs[0].set_xlim(time[0], time[-1])
@@ -134,7 +135,7 @@ def plot_world_variables(time, var_data, var_names, var_lims,
         ax_.yaxis.set_major_formatter(formatter_)
 
     tkw = dict(size=4, width=1.5)
-    axs[0].set_xlabel("time [years]")
+    axs[0].set_xlabel("Year")
     axs[0].tick_params(axis='x', **tkw)
     for i, (ax, p) in enumerate(zip(axs, ps)):
         ax.set_ylabel(p.get_label(), rotation="horizontal")
@@ -143,6 +144,28 @@ def plot_world_variables(time, var_data, var_names, var_lims,
         ax.yaxis.set_label_coords(-i*dist_spines, 1.01)
 
     if title is not None:
-        fig.suptitle(title, x=0.95, ha="right", fontsize=10)
+        fig.suptitle(title, x=0.5, fontsize=15)
 
-    plt.tight_layout()
+    descriptions = {
+        "NRFR": "Nonrenewable resources remaining (1 = 100%)",
+        "IOPC": "Industrial output per person per year",
+        "FPC": "Food per person per year",
+        "POP": "Population (number of people)",
+        "PPOLX": "Persistent pollution index (1 = 1970 level)",
+        "IO": "Total industrial output per year",
+        "F": "Total food production per year",
+        "LE": "Life expectancy (years)",
+        "SOPC": "Service output per person per year",
+        "CIOPC": "Consumer industrial output per person per year",
+        "EF": "Ecological footprint",
+        "HWI": "Human welfare index",
+        "NR": "Remaining nonrenewable resources",
+    }
+    labels = [f"{name} – {descriptions.get(name, name)}" for name in var_names]
+    fig.legend(ps, labels, loc="lower center", bbox_to_anchor=(0.5, 0.025),
+               ncol=1, frameon=False, fontsize=11)
+    legend_height = 0.07 + 0.032 * var_number
+    fig.text(0.5, legend_height, "Read each curve against its own color-coded scale.",
+             ha="center", fontsize=10, color="0.35")
+    fig.tight_layout(rect=(0, legend_height + 0.035, 1, 0.95))
+    return fig, axs

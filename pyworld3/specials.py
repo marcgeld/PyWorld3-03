@@ -173,7 +173,7 @@ class Smooth:
         else:
             if self.method == "odeint":
                 res = odeint(func_delay1, self.out_arr[k-1], [0, self.dt], args=(self.in_arr[k-1], delay), )
-                self.out_arr[k] = res[1, :]
+                self.out_arr[k] = res[1, 0]
             elif self.method == "euler":
                     dout = self.in_arr[k-1] - self.out_arr[k-1]
                     dout *= self.dt/delay

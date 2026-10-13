@@ -32,7 +32,8 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL license and that you accept its terms.
 
-from numpy import arange
+from numpy import arange, isfinite
+from math import isclose
 
 from .population import Population
 from .capital import Capital
@@ -103,6 +104,13 @@ class World3(Population, Capital, Agriculture, Pollution, Resource):
 
     def __init__(self, year_min=1900, year_max=2100, dt=0.5, pyear=1975, pyear_res_tech = 4000, pyear_pp_tech = 4000,pyear_fcaor = 4000, pyear_y_tech = 4000,
                  iphst=1940, verbose=False):
+        if not all(isfinite(value) for value in (year_min, year_max, dt)):
+            raise ValueError("Years and dt must be finite")
+        if dt <= 0 or year_max <= year_min:
+            raise ValueError("dt must be positive and year_max greater than year_min")
+        steps = (year_max - year_min) / dt
+        if not isclose(steps, round(steps), rel_tol=0, abs_tol=1e-8):
+            raise ValueError("The simulation interval must be divisible by dt")
         self.iphst = iphst
         self.pyear = pyear
         self.pyear_res_tech = pyear_res_tech
@@ -113,9 +121,9 @@ class World3(Population, Capital, Agriculture, Pollution, Resource):
         self.year_min = year_min
         self.year_max = year_max
         self.length = self.year_max - self.year_min
-        self.n = int(self.length / self.dt) + 1
-        self.time = arange(self.year_min, self.year_max + self.dt, self.dt)
-        self.verbose = False
+        self.n = round(steps) + 1
+        self.time = self.year_min + arange(self.n) * self.dt
+        self.verbose = verbose
 
     def init_world3_constants(self, p1i=65e7, p2i=70e7, p3i=19e7, p4i=6e7,
                               dcfsn=3.8, fcest=4000, hsid=20, ieat=3, len=28,
@@ -243,7 +251,6 @@ class World3(Population, Capital, Agriculture, Pollution, Resource):
             self.loop0_pollution()
             self.loop0_resource()
            
-        self.verbose = False
         for k_ in range(1, self.n):
             self.redo_loop = True
             while self.redo_loop:
@@ -501,14 +508,14 @@ def hello_world3():
     world3.init_world3_variables()
     world3.set_world3_table_functions()
     world3.set_world3_delay_functions()
-    world3.run_world3(fast=True)
+    world3.run_world3(fast=False)
 
     plot_world_variables(world3.time,
                          [world3.nrfr, world3.iopc, world3.fpc, world3.pop,
                           world3.ppolx],
                          ["NRFR", "IOPC", "FPC", "POP", "PPOLX"],
                          [[0, 1], [0, 1e3], [0, 1e3], [0, 16e9], [0, 32]],
-                         figsize=(7, 5),
+                         figsize=(14, 9),
                          grid=1,
                          title="World3 reference run")
     show()

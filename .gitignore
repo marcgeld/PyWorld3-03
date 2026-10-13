@@ -1,0 +1,73 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.DS_Store
+.idea/
+
+# Imported from marcgeld/macos.gitignore: https://raw.githubusercontent.com/marcgeld/macos.gitignore/refs/heads/main/.gitignore
+# General
+.AppleDouble
+.LSOverride
+# Icon must end with two \r
+Icon
+# Thumbnails
+._*
+.*_*
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.Spotlight-S-*
+.TemporaryItems
+.Trashes
+.Trash
+.Trash-*
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.com.apple.timemachine.supported
+.metadata_never_index
+.noindex
+.com.apple.afp.AFP_Resource
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+# Time Machine and Mobile Backup
+.mobilebackup
+# macOS Application bundles
+*.app
+*.localized
+# Logs and temporary files
+*.log
+.log
+logs/
+tmp/
+temp/
+# Virtual Machines and Disk Images
+*.dmg
+*.sparseimage
+*.vmdk
+*.vdi
+*.qcow2
+# Swift build artifacts
+.swiftpm/
+.build/
+Packages/
+# Xcode build artifacts and user files
+DerivedData/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+xcuserdata/
+*.xcodeproj/
+.xcworkspace/
+# Chrome/Edge cache files
+.chrome
